@@ -12,11 +12,11 @@ namespace EmployeeCRUDApp
             while (!exit)
             {
                 Console.Clear(); // Clear the console before showing the menu
-                Console.WriteLine("\n--- Employee Management ---");
-                Console.WriteLine("1. Create Employee");
-                Console.WriteLine("2. List Employees");
-                Console.WriteLine("3. Update Employee");
-                Console.WriteLine("4. Delete Employee");
+                Console.WriteLine("\n--- Car Management ---");
+                Console.WriteLine("1. Create Car");
+                Console.WriteLine("2. List Cars");
+                Console.WriteLine("3. Update Car");
+                Console.WriteLine("4. Delete Car");
                 Console.WriteLine("5. Exit");
                 Console.Write("Select an option: ");
                 string option = Console.ReadLine();
@@ -25,20 +25,20 @@ namespace EmployeeCRUDApp
                     switch (option)
                     {
                         case "1":
-                            Console.Clear(); // Clear the screen before creating an employee
-                            CreateEmployee(connection);
+                            Console.Clear(); // Clear the screen before creating an Car
+                            CreateCar(connection);
                             break;
                         case "2":
-                            Console.Clear(); // Clear the screen before listing employees
-                            ListEmployees(connection);
+                            Console.Clear(); // Clear the screen before listing Cars
+                            ListCars(connection);
                             break;
                         case "3":
-                            Console.Clear(); // Clear the screen before updating an employee
-                            UpdateEmployee(connection);
+                            Console.Clear(); // Clear the screen before updating an Car
+                            UpdateCar(connection);
                             break;
                         case "4":
-                            Console.Clear(); // Clear the screen before deleting an employee
-                            DeleteEmployee(connection);
+                            Console.Clear(); // Clear the screen before deleting an Car
+                            DeleteCar(connection);
                             break;
                         case "5":
                             exit = true;
@@ -58,15 +58,15 @@ namespace EmployeeCRUDApp
         // Open the SQLite connection
         static SqlConnection OpenConnection()
         {
-            var connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=EmployeeDb;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False;";
+            var connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=CarDb;Trusted_Connection=True;TrustServerCertificate=True;Encrypt=False;";
             var connection = new SqlConnection(connectionString);
             connection.Open();
 
             string createTableQuery = @"
-        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Employees')
+        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Cars')
         BEGIN
-            CREATE TABLE Employees (
-                EmployeeID INT PRIMARY KEY IDENTITY(1,1),
+            CREATE TABLE Cars (
+                CarID INT PRIMARY KEY IDENTITY(1,1),
                 FirstName NVARCHAR(100) NOT NULL,
                 LastName NVARCHAR(100) NOT NULL,
                 DateOfBirth DATE NOT NULL
@@ -81,8 +81,8 @@ namespace EmployeeCRUDApp
             return connection;
         }
 
-        // Create a new employee
-        static void CreateEmployee(SqlConnection connection)
+        // Create a new Car
+        static void CreateCar(SqlConnection connection)
         {
             Console.Write("Enter First Name: ");
             string firstName = Console.ReadLine();
@@ -91,7 +91,7 @@ namespace EmployeeCRUDApp
             Console.Write("Enter Date of Birth (yyyy-mm-dd): ");
             string dob = Console.ReadLine();
 
-            string insertQuery = "INSERT INTO Employees (FirstName, LastName, DateOfBirth) VALUES(@FirstName, @LastName, @DateOfBirth)";
+            string insertQuery = "INSERT INTO Cars (FirstName, LastName, DateOfBirth) VALUES(@FirstName, @LastName, @DateOfBirth)";
             using (var command = new SqlCommand(insertQuery, connection))
             {
                 command.Parameters.AddWithValue("@FirstName", firstName);
@@ -99,65 +99,65 @@ namespace EmployeeCRUDApp
                 command.Parameters.AddWithValue("@DateOfBirth", dob);
                 command.ExecuteNonQuery();
             }
-            Console.WriteLine("Employee created successfully.");
+            Console.WriteLine("Car created successfully.");
         }
-        // List all employees
-        static void ListEmployees(SqlConnection connection)
+        // List all Cars
+        static void ListCars(SqlConnection connection)
         {
-            string selectQuery = "SELECT * FROM Employees";
+            string selectQuery = "SELECT * FROM Cars";
             using (var command = new SqlCommand(selectQuery, connection))
             using (var reader = command.ExecuteReader())
             {
-                Console.WriteLine("\n--- Employee List ---");
+                Console.WriteLine("\n--- Car List ---");
                 while (reader.Read())
                 {
-                    Console.WriteLine($"ID: {reader["EmployeeID"]}, Name: {reader["FirstName"]}{reader["LastName"]}, DOB: {reader["DateOfBirth"]} ");
+                    Console.WriteLine($"ID: {reader["CarID"]}, Name: {reader["FirstName"]}{reader["LastName"]}, DOB: {reader["DateOfBirth"]} ");
                 }
             }
         }
-        // Update an employee
-        static void UpdateEmployee(SqlConnection connection)
+        // Update an Car
+        static void UpdateCar(SqlConnection connection)
         {
-            Console.Write("Enter Employee ID to update: ");
-            int employeeID = int.Parse(Console.ReadLine());
+            Console.Write("Enter Car ID to update: ");
+            int CarID = int.Parse(Console.ReadLine());
             Console.Write("Enter new First Name: ");
             string newFirstName = Console.ReadLine();
             Console.Write("Enter new Last Name: ");
             string newLastName = Console.ReadLine();
-            string updateQuery = "UPDATE Employees SET FirstName = @FirstName, LastName = @LastName WHERE EmployeeID = @EmployeeID";
+            string updateQuery = "UPDATE Cars SET FirstName = @FirstName, LastName = @LastName WHERE CarID = @CarID";
             using (var command = new SqlCommand(updateQuery, connection))
             {
                 command.Parameters.AddWithValue("@FirstName", newFirstName);
                 command.Parameters.AddWithValue("@LastName", newLastName);
-                command.Parameters.AddWithValue("@EmployeeID", employeeID);
+                command.Parameters.AddWithValue("@CarID", CarID);
                 int rowsAffected = command.ExecuteNonQuery();
                 if (rowsAffected > 0)
                 {
-                    Console.WriteLine("Employee updated successfully.");
+                    Console.WriteLine("Car updated successfully.");
                 }
                 else
                 {
-                    Console.WriteLine("Employee not found.");
+                    Console.WriteLine("Car not found.");
                 }
             }
         }
-        // Delete an employee
-        static void DeleteEmployee(SqlConnection connection)
+        // Delete an Car
+        static void DeleteCar(SqlConnection connection)
         {
-            Console.Write("Enter Employee ID to delete: ");
-            int employeeID = int.Parse(Console.ReadLine());
-            string deleteQuery = "DELETE FROM Employees WHERE EmployeeID = @EmployeeID";
+            Console.Write("Enter Car ID to delete: ");
+            int CarID = int.Parse(Console.ReadLine());
+            string deleteQuery = "DELETE FROM Cars WHERE CarID = @CarID";
             using (var command = new SqlCommand(deleteQuery, connection))
             {
-                command.Parameters.AddWithValue("@EmployeeID", employeeID);
+                command.Parameters.AddWithValue("@CarID", CarID);
                 int rowsAffected = command.ExecuteNonQuery();
                 if (rowsAffected > 0)
                 {
-                    Console.WriteLine("Employee deleted successfully.");
+                    Console.WriteLine("Car deleted successfully.");
                 }
                 else
                 {
-                    Console.WriteLine("Employee not found.");
+                    Console.WriteLine("Car not found.");
                 }
             }
         }
